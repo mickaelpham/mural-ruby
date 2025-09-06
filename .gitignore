@@ -1,0 +1,4 @@
+.env
+/pkg/
+bin/test
+coverage

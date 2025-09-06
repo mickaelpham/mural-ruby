@@ -1,0 +1,21 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Exclude:
+  - test/**/*
+
+Metrics/ClassLength:
+  Exclude:
+  - test/**/*
+
+Metrics/MethodLength:
+  Exclude:
+  - test/**/*

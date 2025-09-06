@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'dotenv/load'
+require 'json'
+require 'webrick'
+
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'mural'
+
+server = WEBrick::HTTPServer.new(
+  {
+    Port: 4567,
+    DocumentRoot: '/Users/mickael/public_html',
+    Logger: WEBrick::Log.new(File::NULL),
+    AccessLog: []
+  }
+)
+
+code = ''
+
+server.mount_proc('/callback') do |req, resp|
+  code = req.query['code']
+
+  resp.content_type = 'text/plain'
+  resp.body = 'Success! You may close this browser window.'
+end
+
+# Trap CTRL-C signal to shutdown the server
+%w[INT TERM].each { |signal| trap(signal) { server.shutdown } }
+
+Thread.new do
+  server.start
+end
+
+mural = Mural::Client.from_env
+puts 'Authorizing Mural. Please check your web browser.'
+`open "#{mural.authorize_url}"`
+
+# We wait until the code is populated by the GET /callback request
+sleep 2 while code == ''
+server.shutdown
+
+puts "Success! Received code \"#{code}.\" Requesting tokens…"
+
+# Now requesting the access and refresh token
+tokens = mural.request_token(code)
+
+# Append to the `.env` file to store those tokens
+dotenv_file = File.join(File.dirname(__FILE__), '..', '.env')
+File.open(dotenv_file, 'a') do |f|
+  f.puts("\n# --- Tokens requested #{Time.now} ---")
+  f.puts("MURAL_ACCESS_TOKEN=#{tokens['access_token']}")
+  f.puts("MURAL_REFRESH_TOKEN=#{tokens['refresh_token']}")
+end
+
+puts 'Tokens written to your `.env` file.'
+puts 'Now start an interactive session by running `bin/console` ' \
+     'in your terminal.'
