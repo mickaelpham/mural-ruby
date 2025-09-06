@@ -1,5 +1,10 @@
 # Mural Ruby
 
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mickaelpham/mural-ruby/ruby.yml?branch=main&style=for-the-badge)](https://github.com/mickaelpham/mural-ruby/actions/workflows/ruby.yml?query=branch%3Amain)
+[![Gem Version](https://img.shields.io/gem/v/mural-ruby?style=for-the-badge)](https://rubygems.org/gems/mural-ruby)
+[![GitHub License](https://img.shields.io/github/license/mickaelpham/mural-ruby?style=for-the-badge)](https://github.com/mickaelpham/mural-ruby/blob/main/UNLICENSE)
+
+
 Ruby library for the [Mural](https://app.mural.co) public API.
 
 ## Installation
