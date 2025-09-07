@@ -10,7 +10,7 @@ module Mural
       # The total number of votes for the widget.
       total_votes: 'totalVotes',
       # The number of unique collaborators that voted for the widget.
-      uniqueVoters: 'uniqueVoters'
+      unique_voters: 'uniqueVoters'
     )
   end
 end

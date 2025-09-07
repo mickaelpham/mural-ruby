@@ -227,4 +227,67 @@ class TestFacilitationFeatures < Minitest::Test
 
     assert_requested vote_request
   end
+
+  def test_list_voting_session_results
+    mural_id = 'mural-1'
+    voting_session_id = 'voting-session-1'
+
+    stub_request(
+      :get,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}" \
+      "/voting-sessions/#{voting_session_id}/results"
+    ).to_return_json(
+      body: {
+        value: [
+          {
+            widgetId: 'widget-1',
+            totalVotes: 5,
+            uniqueVoters: 2
+          }
+        ]
+      }
+    )
+
+    results, = @client.mural_content.list_voting_session_results(
+      mural_id,
+      voting_session_id
+    )
+
+    assert_equal 1, results.size
+
+    result = results.first
+
+    assert_instance_of Mural::VotingSessionResult, result
+    assert_equal 'widget-1', result.widget_id
+    assert_equal 5, result.total_votes
+    assert_equal 2, result.unique_voters
+  end
+
+  def test_retrieve_timer
+    mural_id = 'mural-1'
+
+    stub_request(
+      :get,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/timer"
+    ).to_return_json(
+      body: {
+        value: {
+          duration: 1,
+          initialTimestamp: 2,
+          now: 3,
+          pausedTimestamp: nil,
+          soundEnabled: true
+        }
+      }
+    )
+
+    timer = @client.mural_content.retrieve_timer(mural_id)
+
+    assert_instance_of Mural::Timer, timer
+    assert_equal 1, timer.duration
+    assert_equal 2, timer.initial_timestamp
+    assert_equal 3, timer.now
+    assert_nil timer.paused_timestamp
+    assert timer.sound_enabled
+  end
 end

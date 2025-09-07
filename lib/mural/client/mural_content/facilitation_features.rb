@@ -99,6 +99,13 @@ module Mural
             "/vote/#{widget_id}"
           )
         end
+
+        # https://developers.mural.co/public/reference/getmuraltimer
+        def retrieve_timer(mural_id)
+          json = get("/api/public/v1/murals/#{mural_id}/timer")
+
+          Mural::Timer.decode(json['value'])
+        end
       end
     end
   end
