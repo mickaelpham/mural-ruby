@@ -290,4 +290,87 @@ class TestFacilitationFeatures < Minitest::Test
     assert_nil timer.paused_timestamp
     assert timer.sound_enabled
   end
+
+  def test_start_timer
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/timer/start"
+    )
+      .with(body: { duration: 1, soundEnabled: false })
+      .to_return_json(
+        body: {
+          value: {
+            duration: 1,
+            initialTimestamp: 2,
+            now: 3,
+            pausedTimestamp: nil,
+            soundEnabled: false
+          }
+        }
+      )
+
+    timer = @client.mural_content.start_timer(
+      mural_id,
+      duration: 1,
+      sound_enabled: false
+    )
+
+    assert_instance_of Mural::Timer, timer
+    assert_equal 1, timer.duration
+    assert_equal 2, timer.initial_timestamp
+    assert_equal 3, timer.now
+    assert_nil timer.paused_timestamp
+    refute timer.sound_enabled
+  end
+
+  def test_end_timer
+    mural_id = 'mural-1'
+
+    end_timer_request = stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/timer/end"
+    ).to_return(status: 204)
+
+    @client.mural_content.end_timer(mural_id)
+
+    assert_requested end_timer_request
+  end
+
+  def test_update_timer
+    mural_id = 'mural-1'
+
+    stub_request(
+      :patch,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/timer"
+    )
+      .with(body: { delta: 10, soundEnabled: false, paused: true })
+      .to_return_json(
+        body: {
+          value: {
+            duration: 1,
+            initialTimestamp: 2,
+            now: 3,
+            pausedTimestamp: 4,
+            soundEnabled: false
+          }
+        }
+      )
+
+    update_timer_params = Mural::UpdateTimerParams.new.tap do |params|
+      params.delta = 10
+      params.sound_enabled = false
+      params.paused = true
+    end
+
+    timer = @client.mural_content.update_timer(mural_id, update_timer_params)
+
+    assert_instance_of Mural::Timer, timer
+    assert_equal 1, timer.duration
+    assert_equal 2, timer.initial_timestamp
+    assert_equal 3, timer.now
+    assert_equal 4, timer.paused_timestamp
+    refute timer.sound_enabled
+  end
 end

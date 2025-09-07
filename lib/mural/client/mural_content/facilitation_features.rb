@@ -106,6 +106,31 @@ module Mural
 
           Mural::Timer.decode(json['value'])
         end
+
+        # https://developers.mural.co/public/reference/startmuraltimer
+        def start_timer(mural_id, duration:, sound_enabled: true)
+          json = post(
+            "/api/public/v1/murals/#{mural_id}/timer/start",
+            { duration: duration, soundEnabled: sound_enabled }
+          )
+
+          Mural::Timer.decode(json['value'])
+        end
+
+        # https://developers.mural.co/public/reference/stopmuraltimer
+        def end_timer(mural_id)
+          post("/api/public/v1/murals/#{mural_id}/timer/end")
+        end
+
+        # https://developers.mural.co/public/reference/updatemuraltimer
+        def update_timer(mural_id, update_timer_params)
+          json = patch(
+            "/api/public/v1/murals/#{mural_id}/timer",
+            update_timer_params.encode
+          )
+
+          Mural::Timer.decode(json['value'])
+        end
       end
     end
   end
