@@ -113,4 +113,19 @@ class TestFacilitationFeatures < Minitest::Test
     assert_equal 'voting-session-1', voting_session.id
     assert_equal 'My voting session', voting_session.title
   end
+
+  def test_destroy_voting_session
+    mural_id = 'mural-1'
+    voting_session_id = 'voting-session-1'
+
+    delete_request = stub_request(
+      :delete,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}" \
+      "/voting-sessions/#{voting_session_id}"
+    ).to_return(status: 204)
+
+    @client.mural_content.destroy_voting_session(mural_id, voting_session_id)
+
+    assert_requested delete_request
+  end
 end

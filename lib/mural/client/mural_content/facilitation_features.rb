@@ -49,6 +49,14 @@ module Mural
 
           Mural::VotingSession.decode(json['value'])
         end
+
+        # https://developers.mural.co/public/reference/deletemuralvotingsessionbyid
+        def destroy_voting_session(mural_id, voting_session_id)
+          delete(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions" \
+            "/#{voting_session_id}"
+          )
+        end
       end
     end
   end
