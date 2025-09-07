@@ -44,4 +44,17 @@ class TestFacilitationFeatures < Minitest::Test
 
     assert_requested stop_request
   end
+
+  def test_retrieve_private_mode
+    mural_id = 'mural-1'
+
+    stub_request(
+      :get,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/private-mode"
+    ).to_return_json(body: { value: { active: false } })
+
+    private_mode = @client.mural_content.retrieve_private_mode(mural_id)
+
+    refute private_mode.active
+  end
 end
