@@ -13,6 +13,16 @@ module Mural
 
           Mural::Widget::Arrow.decode(json['value'])
         end
+
+        # https://developers.mural.co/public/reference/updatearrow
+        def update_arrow(mural_id, arrow_id, update_arrow_params)
+          json = patch(
+            "/api/public/v1/murals/#{mural_id}/widgets/arrow/#{arrow_id}",
+            update_arrow_params.encode
+          )
+
+          Mural::Widget::Arrow.decode(json['value'])
+        end
       end
     end
   end
