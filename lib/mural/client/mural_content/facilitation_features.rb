@@ -15,8 +15,8 @@ module Mural
         end
 
         # https://developers.mural.co/public/reference/stopprivatemode
-        def stop_private_mode(mural_id)
-          post("/api/public/v1/murals/#{mural_id}/private-mode/stop")
+        def end_private_mode(mural_id)
+          post("/api/public/v1/murals/#{mural_id}/private-mode/end")
         end
 
         # https://developers.mural.co/public/reference/getprivatemode
@@ -38,6 +38,25 @@ module Mural
           end
 
           [voting_sessions, json['next']]
+        end
+
+        # https://developers.mural.co/public/reference/getmuralvotingsessionresults
+        def list_voting_session_results(
+          mural_id,
+          voting_session_id,
+          next_page: nil
+        )
+          json = get(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions" \
+            "/#{voting_session_id}/results",
+            { next: next_page }
+          )
+
+          voting_session_results = json['value'].map do |result|
+            Mural::VotingSessionResult.decode(result)
+          end
+
+          [voting_session_results, json['next']]
         end
 
         # https://developers.mural.co/public/reference/getmuralvotingsessionbyid
