@@ -5,6 +5,8 @@ module Mural
     class MuralContent
       extend Forwardable
 
+      include Chats
+      include FacilitationFeatures
       include Files
       include StickyNotes
       include Tags
