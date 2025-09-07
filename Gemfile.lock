@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mural-ruby (0.3.0)
+    mural-ruby (0.4.0)
       zeitwerk (~> 2.7)
 
 GEM
