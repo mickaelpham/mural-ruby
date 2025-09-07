@@ -13,6 +13,11 @@ module Mural
 
           Mural::PrivateMode.decode(json['value'])
         end
+
+        # https://developers.mural.co/public/reference/stopprivatemode
+        def stop_private_mode(mural_id)
+          post("/api/public/v1/murals/#{mural_id}/private-mode/stop")
+        end
       end
     end
   end

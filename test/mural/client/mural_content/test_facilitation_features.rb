@@ -31,4 +31,17 @@ class TestFacilitationFeatures < Minitest::Test
     assert_equal 'user-1', private_mode.started_by
     assert private_mode.hide_authors
   end
+
+  def test_stop_private_mode
+    mural_id = 'mural-1'
+
+    stop_request = stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/private-mode/stop"
+    ).to_return(status: 204)
+
+    @client.mural_content.stop_private_mode(mural_id)
+
+    assert_requested stop_request
+  end
 end
