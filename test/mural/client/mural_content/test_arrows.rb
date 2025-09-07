@@ -6,7 +6,7 @@ class TestArrows < Minitest::Test
   end
 
   def test_create_minimal_arrow
-    mural_id = 'mural-id'
+    mural_id = 'mural-1'
 
     stub_request(
       :post,
@@ -52,7 +52,7 @@ class TestArrows < Minitest::Test
   end
 
   def test_create_arrow_without_points
-    mural_id = 'mural-id'
+    mural_id = 'mural-1'
 
     stub_request(
       :post,
@@ -92,7 +92,7 @@ class TestArrows < Minitest::Test
   end
 
   def test_create_arrow_with_style_and_formatted_label
-    mural_id = 'mural-id'
+    mural_id = 'mural-1'
 
     stub_request(
       :post,
@@ -151,7 +151,7 @@ class TestArrows < Minitest::Test
   end
 
   def test_create_arrow_with_unformatted_labels
-    mural_id = 'mural-id'
+    mural_id = 'mural-1'
 
     stub_request(
       :post,
@@ -208,6 +208,84 @@ class TestArrows < Minitest::Test
     end
 
     arrow = @client.mural_content.create_arrow(mural_id, create_arrow_params)
+
+    assert_instance_of Mural::Widget::Arrow, arrow
+    assert_equal 'arrow-1', arrow.id
+  end
+
+  def test_update_arrow
+    mural_id = 'mural-1'
+    arrow_id = 'arrow-1'
+
+    stub_request(
+      :patch,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets" \
+      "/arrow/#{arrow_id}"
+    ).with(
+      body: {
+        points: [
+          { x: 216, y: 0 },
+          { x: 0, y: 0 }
+        ]
+      }
+    ).to_return_json(body: { value: { id: 'arrow-1' } })
+
+    update_arrow_params = Mural::Widget::UpdateArrowParams.new.tap do |params|
+      params.points = [
+        Mural::Widget::Arrow::Point.new.tap do |p|
+          p.x = 216
+          p.y = 0
+        end,
+        Mural::Widget::Arrow::Point.new.tap do |p|
+          p.x = 0
+          p.y = 0
+        end
+      ]
+    end
+
+    arrow = @client.mural_content.update_arrow(
+      mural_id,
+      arrow_id,
+      update_arrow_params
+    )
+
+    assert_instance_of Mural::Widget::Arrow, arrow
+    assert_equal 'arrow-1', arrow.id
+  end
+
+  def test_update_arrow_with_style_and_formatted_label
+    mural_id = 'mural-1'
+    arrow_id = 'arrow-1'
+
+    stub_request(
+      :patch,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets" \
+      "/arrow/#{arrow_id}"
+    ).with(
+      body: {
+        style: { strokeColor: '#FAFAFAFF' },
+        label: { format: { fontFamily: 'proxima-nova' } }
+      }
+    ).to_return_json(body: { value: { id: 'arrow-1' } })
+
+    update_arrow_params = Mural::Widget::UpdateArrowParams.new.tap do |params|
+      params.style = Mural::Widget::UpdateArrowParams::Style.new.tap do |style|
+        style.stroke_color = '#FAFAFAFF'
+      end
+
+      params.label = Mural::Widget::UpdateArrowParams::Label.new.tap do |label|
+        label.format =
+          Mural::Widget::UpdateArrowParams::Label::Format.new.tap do |format|
+            format.font_family = 'proxima-nova'
+          end
+      end
+    end
+
+    arrow = @client.mural_content.update_arrow(
+      mural_id,
+      arrow_id,
+      update_arrow_params
+    )
 
     assert_instance_of Mural::Widget::Arrow, arrow
     assert_equal 'arrow-1', arrow.id
