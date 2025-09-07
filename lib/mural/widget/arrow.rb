@@ -88,6 +88,13 @@ module Mural
           end
         end
 
+        def encode
+          super.tap do |json|
+            json['format'] = json['format']&.encode
+            json['labels']&.map!(&:encode)
+          end.compact
+        end
+
         class Format
           include Mural::Codec
 
