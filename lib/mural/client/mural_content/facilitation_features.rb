@@ -57,6 +57,29 @@ module Mural
             "/#{voting_session_id}"
           )
         end
+
+        # https://developers.mural.co/public/reference/startmuralvotingsession
+        def start_voting_session(mural_id, start_voting_session_params)
+          json = post(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions/start",
+            start_voting_session_params.encode
+          )
+
+          Mural::VotingSession.decode(json['value'])
+        end
+
+        # https://developers.mural.co/public/reference/endmuralvotingsession
+        def end_voting_session(mural_id)
+          post("/api/public/v1/murals/#{mural_id}/voting-sessions/end")
+        end
+
+        # https://developers.mural.co/public/reference/votewidgetmuralvotingsession
+        def vote_for_widget(mural_id, widget_id)
+          post(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions" \
+            "/vote/#{widget_id}"
+          )
+        end
       end
     end
   end
