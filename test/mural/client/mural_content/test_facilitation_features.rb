@@ -57,4 +57,60 @@ class TestFacilitationFeatures < Minitest::Test
 
     refute private_mode.active
   end
+
+  def test_list_voting_sessions
+    mural_id = 'mural-1'
+
+    stub_request(
+      :get,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/voting-sessions"
+    ).to_return_json(
+      body: {
+        value: [
+          {
+            id: 'voting-session-1',
+            title: 'My voting session'
+          }
+        ]
+      }
+    )
+
+    voting_sessions, = @client.mural_content.list_voting_sessions(mural_id)
+
+    assert_equal 1, voting_sessions.size
+
+    voting_session = voting_sessions.first
+
+    assert_instance_of Mural::VotingSession, voting_session
+    assert_equal 'voting-session-1', voting_session.id
+    assert_equal 'My voting session', voting_session.title
+  end
+
+  def test_retrieve_voting_session
+    mural_id = 'mural-1'
+    voting_session_id = 'voting-session-1'
+
+    stub_request(
+      :get,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}" \
+      "/voting-sessions/#{voting_session_id}"
+    ).to_return_json(
+      body: {
+        value: {
+          id: 'voting-session-1',
+          title: 'My voting session'
+        }
+
+      }
+    )
+
+    voting_session =
+      @client
+      .mural_content
+      .retrieve_voting_session(mural_id, voting_session_id)
+
+    assert_instance_of Mural::VotingSession, voting_session
+    assert_equal 'voting-session-1', voting_session.id
+    assert_equal 'My voting session', voting_session.title
+  end
 end

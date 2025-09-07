@@ -25,6 +25,30 @@ module Mural
 
           Mural::PrivateMode.decode(json['value'])
         end
+
+        # https://developers.mural.co/public/reference/getmuralvotingsessions
+        def list_voting_sessions(mural_id, next_page: nil)
+          json = get(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions",
+            { next: next_page }
+          )
+
+          voting_sessions = json['value'].map do |session|
+            Mural::VotingSession.decode(session)
+          end
+
+          [voting_sessions, json['next']]
+        end
+
+        # https://developers.mural.co/public/reference/getmuralvotingsessionbyid
+        def retrieve_voting_session(mural_id, voting_session_id)
+          json = get(
+            "/api/public/v1/murals/#{mural_id}/voting-sessions" \
+            "/#{voting_session_id}"
+          )
+
+          Mural::VotingSession.decode(json['value'])
+        end
       end
     end
   end
