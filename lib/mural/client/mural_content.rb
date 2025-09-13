@@ -11,6 +11,7 @@ module Mural
       include FacilitationFeatures
       include Files
       include Images
+      include Shapes
       include StickyNotes
       include Tags
       include Widgets
