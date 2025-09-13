@@ -19,7 +19,7 @@ class TestStickyNotes < Minitest::Test
       .to_return_json(body: { value: [{ id: 'sticky-1' }] }, status: 201)
 
     create_sticky_note_params =
-      Mural::CreateStickyNoteParams.new.tap do |sticky_note|
+      Mural::Widget::CreateStickyNoteParams.new.tap do |sticky_note|
         sticky_note.text = 'My sticky'
       end
 
@@ -48,14 +48,13 @@ class TestStickyNotes < Minitest::Test
         status: 201
       )
 
-    sticky_note_style = Mural::CreateStickyNoteParams::Style.new.tap do |style|
-      style.background_color = '#FAFAFAFF'
-    end
-
     create_sticky_note_params =
-      Mural::CreateStickyNoteParams.new.tap do |sticky_note|
+      Mural::Widget::CreateStickyNoteParams.new.tap do |sticky_note|
         sticky_note.text = 'My sticky'
-        sticky_note.style = sticky_note_style
+        sticky_note.style =
+          Mural::Widget::CreateStickyNoteParams::Style.new.tap do |style|
+            style.background_color = '#FAFAFAFF'
+          end
       end
 
     created_sticky_notes =
@@ -79,9 +78,10 @@ class TestStickyNotes < Minitest::Test
       .with(body: { text: 'updated text' })
       .to_return_json(body: { value: { id: widget_id } })
 
-    update_params = Mural::UpdateStickyNoteParams.new.tap do |params|
-      params.text = 'updated text'
-    end
+    update_params =
+      Mural::Widget::UpdateStickyNoteParams.new.tap do |params|
+        params.text = 'updated text'
+      end
 
     updated = @client.mural_content
                      .update_sticky_note(mural_id, widget_id, update_params)
@@ -101,11 +101,13 @@ class TestStickyNotes < Minitest::Test
       .with(body: { style: { bold: true } })
       .to_return_json(body: { value: { id: widget_id } })
 
-    update_params = Mural::UpdateStickyNoteParams.new.tap do |params|
-      params.style = Mural::UpdateStickyNoteParams::Style.new.tap do |style|
-        style.bold = true
+    update_params =
+      Mural::Widget::UpdateStickyNoteParams.new.tap do |params|
+        params.style =
+          Mural::Widget::UpdateStickyNoteParams::Style.new.tap do |style|
+            style.bold = true
+          end
       end
-    end
 
     updated = @client.mural_content
                      .update_sticky_note(mural_id, widget_id, update_params)

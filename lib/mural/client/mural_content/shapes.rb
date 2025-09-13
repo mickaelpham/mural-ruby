@@ -10,10 +10,9 @@ module Mural
         #
         # https://developers.mural.co/public/reference/createshapewidget
         def create_shapes(mural_id, create_shape_params)
-          data = [*create_shape_params]
           json = post(
             "/api/public/v1/murals/#{mural_id}/widgets/shape",
-            data.map(&:encode)
+            [*create_shape_params].map(&:encode)
           )
           json['value'].map do |json_shape|
             Mural::Widget::Shape.decode(json_shape)
