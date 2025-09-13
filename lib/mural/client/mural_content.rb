@@ -10,6 +10,7 @@ module Mural
       include Chats
       include FacilitationFeatures
       include Files
+      include Images
       include StickyNotes
       include Tags
       include Widgets
