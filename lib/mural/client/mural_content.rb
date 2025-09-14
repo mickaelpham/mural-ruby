@@ -13,6 +13,7 @@ module Mural
       include Images
       include Shapes
       include StickyNotes
+      include Tables
       include Tags
       include Widgets
 
