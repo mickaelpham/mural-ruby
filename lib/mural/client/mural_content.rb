@@ -15,6 +15,7 @@ module Mural
       include StickyNotes
       include Tables
       include Tags
+      include Titles
       include Widgets
 
       def_delegators :@client, :get, :post, :patch, :delete
