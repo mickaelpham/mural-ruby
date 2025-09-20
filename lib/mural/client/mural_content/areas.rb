@@ -11,7 +11,7 @@ module Mural
             create_area_params.encode
           )
 
-          Mural::Widget::Area.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
 
         # https://developers.mural.co/public/reference/updatearea
@@ -21,7 +21,7 @@ module Mural
             update_area_params.encode
           )
 
-          Mural::Widget::Area.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
