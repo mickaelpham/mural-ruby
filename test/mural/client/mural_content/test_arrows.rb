@@ -100,7 +100,7 @@ class TestArrows < Minitest::Test
     assert_equal 'arrow-1', arrow.id
   end
 
-  def test_should_parse_content_edited_by
+  def test_should_decode_content_edited_by
     mural_id = 'mural-1'
 
     stub_request(

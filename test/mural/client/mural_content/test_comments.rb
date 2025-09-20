@@ -65,7 +65,7 @@ class TestComments < Minitest::Test
     assert_equal 'This is a test', comment.message
   end
 
-  def test_should_parse_content_edited_by
+  def test_should_decode_content_edited_by
     mural_id = 'mural-1'
 
     stub_request(
