@@ -5,6 +5,47 @@ class TestTables < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_table_cell_params
+    want = %i[
+      col_span
+      column_id
+      height
+      rotation
+      row_id
+      row_span
+      style
+      text_content
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateTableCellParams.attrs.keys.sort
+  end
+
+  def test_create_table_params
+    want = %i[
+      auto_resize
+      cells
+      columns
+      height
+      hidden
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      rows
+      stacking_order
+      style
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateTableParams.attrs.keys.sort
+  end
+
   def test_create_table
     mural_id = 'mural-1'
 

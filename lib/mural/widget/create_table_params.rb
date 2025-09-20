@@ -5,6 +5,7 @@ module Mural
     class CreateTableParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createtable
       define_attributes(
         **Mural::Widget::Table.attrs.filter do |attr|
           %i[
