@@ -5,6 +5,48 @@ class TestShapes < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_shape_params
+    want = %i[
+      height
+      hidden
+      html_text
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      shape
+      stacking_order
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateShapeParams.attrs.keys.sort
+  end
+
+  def test_update_shape_params
+    want = %i[
+      height
+      hidden
+      html_text
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateShapeParams.attrs.keys.sort
+  end
+
   def test_create_shapes
     mural_id = 'mural-1'
 

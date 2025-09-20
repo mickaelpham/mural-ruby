@@ -5,6 +5,7 @@ module Mural
     class UpdateShapeParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/updateshapewidget
       define_attributes(
         **Mural::Widget::CreateShapeParams.attrs.reject do |attr|
           %i[shape stacking_order].include? attr
