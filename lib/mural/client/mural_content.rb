@@ -15,6 +15,7 @@ module Mural
       include StickyNotes
       include Tables
       include Tags
+      include TextBoxes
       include Titles
       include Widgets
 
