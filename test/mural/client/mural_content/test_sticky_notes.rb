@@ -7,6 +7,54 @@ class TestStickyNotes < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_sticky_note_params
+    want = %i[
+      height
+      hidden
+      html_text
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      shape
+      stacking_order
+      style
+      tags
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateStickyNoteParams.attrs.keys.sort
+  end
+
+  def test_update_sticky_note_params
+    want = %i[
+      height
+      hidden
+      html_text
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      tags
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateStickyNoteParams.attrs.keys.sort
+  end
+
   def test_create_sticky_notes
     mural_id = 'some-mural-1'
 

@@ -5,6 +5,7 @@ module Mural
     class CreateStickyNoteParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createstickynote
       define_attributes(
         **Mural::Widget::StickyNote.attrs.filter do |attr|
           %i[
@@ -30,14 +31,13 @@ module Mural
         end
       )
 
+      Style = Mural::Widget::StickyNote::Style
+
       def encode
         super.tap do |json|
           json['style'] = json['style']&.encode
         end.compact
       end
-
-      # Exact same values, no restrictions
-      Style = Mural::Widget::StickyNote::Style
     end
   end
 end
