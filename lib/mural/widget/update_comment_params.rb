@@ -5,6 +5,7 @@ module Mural
     class UpdateCommentParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/updatecomment
       define_attributes(
         **Mural::Widget::CreateCommentParams.attrs.reject do |attr|
           %i[stacking_order].include? attr
