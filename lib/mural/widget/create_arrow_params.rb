@@ -7,25 +7,33 @@ module Mural
 
       # https://developers.mural.co/public/reference/createarrow
       define_attributes(
-        **Mural::Widget::Arrow.attrs.reject do |attr|
+        **Mural::Widget::Arrow.attrs.filter do |attr|
           %i[
-            content_edited_by
-            content_edited_on
-            created_by
-            created_on
-            hidden
-            hide_editor
-            hide_owner
-            id
-            invisible
-            locked
-            locked_by_facilitator
-            type
-            updated_by
-            updated_on
+            arrow_type
+            end_ref_id
+            height
+            instruction
+            label
+            parent_id
+            points
+            presentation_index
+            rotation
+            stackable
+            stacking_order
+            start_ref_id
+            style
+            tip
+            title
+            width
+            x
+            y
           ].include? attr
         end
       )
+
+      Style = Mural::Widget::Arrow::Style
+      Label = Mural::Widget::Arrow::Label
+      Point = Mural::Widget::Arrow::Point
 
       def encode
         super.tap do |json|
@@ -34,10 +42,6 @@ module Mural
           json['style'] = json['style']&.encode
         end
       end
-
-      Style = Mural::Widget::Arrow::Style
-      Label = Mural::Widget::Arrow::Label
-      Point = Mural::Widget::Arrow::Point
     end
   end
 end
