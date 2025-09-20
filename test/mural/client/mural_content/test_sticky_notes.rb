@@ -64,7 +64,10 @@ class TestStickyNotes < Minitest::Test
       '/sticky-note'
     )
       .with(body: [{ text: 'My sticky' }])
-      .to_return_json(body: { value: [{ id: 'sticky-1' }] }, status: 201)
+      .to_return_json(
+        body: { value: [{ id: 'sticky-1', type: 'sticky note' }] },
+        status: 201
+      )
 
     create_sticky_note_params =
       Mural::Widget::CreateStickyNoteParams.new.tap do |sticky_note|
@@ -77,7 +80,48 @@ class TestStickyNotes < Minitest::Test
       .create_sticky_notes(mural_id, create_sticky_note_params)
 
     assert_equal 1, created_sticky_notes.size
+    assert_instance_of Mural::Widget::StickyNote, created_sticky_notes.first
     assert_equal 'sticky-1', created_sticky_notes.first.id
+  end
+
+  def test_should_decode_content_edited_by
+    mural_id = 'some-mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets" \
+      '/sticky-note'
+    )
+      .with(body: [{ text: 'My sticky' }])
+      .to_return_json(
+        body: {
+          value: [
+            {
+              id: 'sticky-1',
+              contentEditedBy: { id: 'user-1', firstName: 'John' },
+              type: 'sticky note'
+            }
+          ]
+        },
+        status: 201
+      )
+
+    create_sticky_note_params =
+      Mural::Widget::CreateStickyNoteParams.new.tap do |sticky_note|
+        sticky_note.text = 'My sticky'
+      end
+
+    created_sticky_notes =
+      @client
+      .mural_content
+      .create_sticky_notes(mural_id, create_sticky_note_params)
+
+    assert_equal 1, created_sticky_notes.size
+
+    sticky_note = created_sticky_notes.first
+
+    assert_equal 'sticky-1', sticky_note.id
+    assert_instance_of Mural::Widget::StickyNote, sticky_note
   end
 
   def test_create_sticky_notes_with_style
@@ -92,7 +136,7 @@ class TestStickyNotes < Minitest::Test
         body: [{ text: 'My sticky', style: { backgroundColor: '#FAFAFAFF' } }]
       )
       .to_return_json(
-        body: { value: [{ id: 'sticky-1' }] },
+        body: { value: [{ id: 'sticky-1', type: 'sticky note' }] },
         status: 201
       )
 
@@ -111,6 +155,7 @@ class TestStickyNotes < Minitest::Test
       .create_sticky_notes(mural_id, create_sticky_note_params)
 
     assert_equal 1, created_sticky_notes.size
+    assert_instance_of Mural::Widget::StickyNote, created_sticky_notes.first
     assert_equal 'sticky-1', created_sticky_notes.first.id
   end
 
@@ -124,7 +169,7 @@ class TestStickyNotes < Minitest::Test
       "/sticky-note/#{widget_id}"
     )
       .with(body: { text: 'updated text' })
-      .to_return_json(body: { value: { id: widget_id } })
+      .to_return_json(body: { value: { id: widget_id, type: 'sticky note' } })
 
     update_params =
       Mural::Widget::UpdateStickyNoteParams.new.tap do |params|
@@ -135,6 +180,7 @@ class TestStickyNotes < Minitest::Test
                      .update_sticky_note(mural_id, widget_id, update_params)
 
     assert_equal widget_id, updated.id
+    assert_instance_of Mural::Widget::StickyNote, updated
   end
 
   def test_update_sticky_note_with_style
@@ -147,7 +193,7 @@ class TestStickyNotes < Minitest::Test
       "/sticky-note/#{widget_id}"
     )
       .with(body: { style: { bold: true } })
-      .to_return_json(body: { value: { id: widget_id } })
+      .to_return_json(body: { value: { id: widget_id, type: 'sticky note' } })
 
     update_params =
       Mural::Widget::UpdateStickyNoteParams.new.tap do |params|
@@ -161,5 +207,6 @@ class TestStickyNotes < Minitest::Test
                      .update_sticky_note(mural_id, widget_id, update_params)
 
     assert_equal widget_id, updated.id
+    assert_instance_of Mural::Widget::StickyNote, updated
   end
 end

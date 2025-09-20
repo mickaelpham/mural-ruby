@@ -15,7 +15,7 @@ module Mural
             [*create_sticky_note_params].map(&:encode)
           )
 
-          json['value'].map { |s| Mural::Widget::StickyNote.decode(s) }
+          json['value'].map { |s| Mural::Widget.decode(s) }
         end
 
         # Update a sticky note widget on a mural.
@@ -32,7 +32,7 @@ module Mural
             update_sticky_note_params.encode
           )
 
-          Mural::Widget::StickyNote.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
