@@ -15,7 +15,7 @@ module Mural
             create_comment_params.encode
           )
 
-          Mural::Widget::Comment.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
 
         # Update a comment widget on a mural.
@@ -29,7 +29,7 @@ module Mural
             update_comment_params.encode
           )
 
-          Mural::Widget::Comment.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
