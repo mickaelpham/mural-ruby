@@ -7,7 +7,7 @@
 
 Ruby library for the [Mural](https://app.mural.co) public API.
 
-**Disclaimer: the views and opinions expressed in this repository are solelythose of the individual contributors and do not represent the official view of Tactivos, Inc. d/b/a Mural.**
+**Disclaimer: the views and opinions expressed in this repository are solely those of the individual contributors and do not represent the official view of Tactivos, Inc. d/b/a Mural.**
 
 **Mural does not endorse this repository in any way.**
 
