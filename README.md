@@ -4,12 +4,15 @@
 [![Gem Version](https://img.shields.io/gem/v/mural-ruby?style=for-the-badge)](https://rubygems.org/gems/mural-ruby)
 [![GitHub License](https://img.shields.io/github/license/mickaelpham/mural-ruby?style=for-the-badge)](https://github.com/mickaelpham/mural-ruby/blob/main/UNLICENSE)
 
-
 Ruby library for the [Mural](https://app.mural.co) public API.
 
-**Disclaimer: the views and opinions expressed in this repository are solely those of the individual contributors and do not represent the official view of Tactivos, Inc. d/b/a Mural.**
-
-**Mural does not endorse this repository in any way.**
+> **Disclaimer**
+>
+> The views and opinions expressed in this repository are solely hose of the
+> individual contributors and do not represent the official view of
+> [Tactivos, Inc. d/b/a Mural](https://www.mural.co/).
+>
+> **Mural does not endorse this repository in any way.**
 
 ## Installation
 
@@ -74,8 +77,8 @@ irb(main):002> mural.users.current_user
 
 ### Upload a file to a mural
 
-To upload a `my.pdf` file that's located in the same directory as where you
-are running the script:
+To upload a `my.pdf` file that's located in the same directory as where you are
+running the script:
 
 ```rb
 MURAL_ID = 'workspace-1.mural-1'
@@ -111,6 +114,37 @@ end
 
 client.mural_content.create_file(MURAL_ID, params)
 ```
+
+## Mentioning someone in a comment
+
+- You can reply to a comment by passing a `replies` array of `String` message.
+  Each message will be added as a reply to the original comment.
+- You can "\[at\] mention" someone in a comment or in a reply by using the
+  following pattern in the `message` or the `replies`:
+
+```
+@[<USER FULL NAME> @<USER ID>](<USER ID>)
+```
+
+Example replying to a thread:
+
+```rb
+MURAL_ID = 'mural-1'
+COMMENT_ID = 'comment-1'
+
+reply_to_params = Mural::Widget::UpdateCommentParams.new.tap do |c|
+  c.replies = ["Can you have a look @[John Doe @user-1](user-1)]?"]
+end
+
+client.mural_content.update_comment(MURAL_ID, COMMENT_ID, reply_to_params)
+```
+
+![comment thread](./img/comment-thread.png)
+
+Note that the user must already be a **mural member** for the mention to trigger
+an email notification.
+
+![comment email notification](./img/comment-email-notification.png)
 
 ## Known limitations
 
