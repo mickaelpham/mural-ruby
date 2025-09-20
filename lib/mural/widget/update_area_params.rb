@@ -5,6 +5,7 @@ module Mural
     class UpdateAreaParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/updatearea
       define_attributes(
         **Mural::Widget::CreateAreaParams.attrs
       )

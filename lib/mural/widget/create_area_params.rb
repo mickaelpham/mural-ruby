@@ -5,23 +5,23 @@ module Mural
     class CreateAreaParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createarea
       define_attributes(
-        **Mural::Widget::Area.attrs.reject do |attr|
+        **Mural::Widget::Area.attrs.filter do |attr|
           %i[
-            content_edited_by
-            content_edited_on
-            created_by
-            created_on
-            hide_editor
-            hide_owner
-            id
-            invisible
-            locked
-            locked_by_facilitator
-            rotation
-            type
-            updated_by
-            updated_on
+            height
+            hidden
+            instruction
+            layout
+            parent_id
+            presentation_index
+            show_title
+            stacking_order
+            style
+            title
+            width
+            x
+            y
           ].include? attr
         end
       )
