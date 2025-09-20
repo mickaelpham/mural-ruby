@@ -15,7 +15,7 @@ module Mural
             [*create_title_params].map(&:encode)
           )
 
-          json['value'].map { |title| Mural::Widget::Text.decode(title) }
+          json['value'].map { |title| Mural::Widget.decode(title) }
         end
 
         # Update a title on a mural
@@ -29,7 +29,7 @@ module Mural
             update_title_params.encode
           )
 
-          Mural::Widget::Text.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
