@@ -11,7 +11,7 @@ module Mural
             create_arrow_params.encode
           )
 
-          Mural::Widget::Arrow.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
 
         # https://developers.mural.co/public/reference/updatearrow
@@ -21,7 +21,7 @@ module Mural
             update_arrow_params.encode
           )
 
-          Mural::Widget::Arrow.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
