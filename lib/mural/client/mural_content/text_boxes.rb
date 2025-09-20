@@ -15,7 +15,7 @@ module Mural
             [*create_text_box_params].map(&:encode)
           )
 
-          json['value'].map { |text_box| Mural::Widget::Text.decode(text_box) }
+          json['value'].map { |text_box| Mural::Widget.decode(text_box) }
         end
 
         # Update a textbox on a mural
@@ -29,7 +29,7 @@ module Mural
             update_text_box_params.encode
           )
 
-          Mural::Widget::Text.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
