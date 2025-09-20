@@ -5,6 +5,7 @@ module Mural
     class CreateTextBoxParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createtextbox
       define_attributes(
         **Mural::Widget::Text.attrs.filter do |attr|
           %i[

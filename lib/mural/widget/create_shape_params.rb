@@ -5,6 +5,7 @@ module Mural
     class CreateShapeParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createshapewidget
       define_attributes(
         **Mural::Widget::Shape.attrs.filter do |attr|
           %i[

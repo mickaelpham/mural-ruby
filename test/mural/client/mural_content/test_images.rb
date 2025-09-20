@@ -7,6 +7,50 @@ class TestImages < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_image_params
+    want = %i[
+      border
+      caption
+      description
+      height
+      hidden
+      hyperlink
+      instruction
+      name
+      parent_id
+      presentation_index
+      rotation
+      show_caption
+      stacking_order
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateImageParams.attrs.keys.sort
+  end
+
+  def test_update_image_params
+    want = %i[
+      border
+      caption
+      description
+      height
+      hidden
+      hyperlink
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      show_caption
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateImageParams.attrs.keys.sort
+  end
+
   def test_create_image
     mural_id = 'mural-1'
 
@@ -19,7 +63,8 @@ class TestImages < Minitest::Test
         body: {
           value: {
             id: 'image-1',
-            thumbnailUrl: 'https://example.com/thumbnail.jpg'
+            thumbnailUrl: 'https://example.com/thumbnail.jpg',
+            type: 'image'
           }
         },
         status: 201
@@ -36,6 +81,39 @@ class TestImages < Minitest::Test
     assert_equal 'https://example.com/thumbnail.jpg', image.thumbnail_url
   end
 
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/image"
+    )
+      .with(body: { name: 'my image' })
+      .to_return_json(
+        body: {
+          value: {
+            id: 'image-1',
+            thumbnailUrl: 'https://example.com/thumbnail.jpg',
+            contentEditedBy: {
+              id: 'user-1',
+              firstName: 'John'
+            },
+            type: 'image'
+          }
+        },
+        status: 201
+      )
+
+    params = Mural::Widget::CreateImageParams.new.tap do |params|
+      params.name = 'my image'
+    end
+
+    image = @client.mural_content.create_image(mural_id, params)
+
+    assert_instance_of Mural::Widget::Image, image
+    assert_equal 'John', image.content_edited_by.first_name
+  end
+
   def test_update_image
     mural_id = 'mural-1'
     image_id = 'image-1'
@@ -47,7 +125,7 @@ class TestImages < Minitest::Test
     )
       .with(body: { showCaption: false })
       .to_return_json(
-        body: { value: { id: 'image-1' } },
+        body: { value: { id: 'image-1', type: 'image' } },
         status: 201
       )
 

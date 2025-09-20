@@ -15,7 +15,7 @@ module Mural
             [*create_shape_params].map(&:encode)
           )
           json['value'].map do |json_shape|
-            Mural::Widget::Shape.decode(json_shape)
+            Mural::Widget.decode(json_shape)
           end
         end
 
@@ -30,7 +30,7 @@ module Mural
             update_shape_params.encode
           )
 
-          Mural::Widget::Shape.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end

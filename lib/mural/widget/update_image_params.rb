@@ -7,7 +7,7 @@ module Mural
 
       define_attributes(
         **Mural::Widget::CreateImageParams.attrs.reject do |attr|
-          %i[name].include? attr
+          %i[name stacking_order].include? attr
         end
       )
     end

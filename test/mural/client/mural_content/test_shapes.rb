@@ -5,6 +5,48 @@ class TestShapes < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_shape_params
+    want = %i[
+      height
+      hidden
+      html_text
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      shape
+      stacking_order
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateShapeParams.attrs.keys.sort
+  end
+
+  def test_update_shape_params
+    want = %i[
+      height
+      hidden
+      html_text
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateShapeParams.attrs.keys.sort
+  end
+
   def test_create_shapes
     mural_id = 'mural-1'
 
@@ -26,11 +68,12 @@ class TestShapes < Minitest::Test
       .to_return_json(
         body: {
           value: [
-            { id: 'shape-1', shape: 'rectangle' },
+            { id: 'shape-1', shape: 'rectangle', type: 'shape' },
             {
               id: 'shape-2',
               shape: 'ellipse',
-              style: { backgroundColor: '#FAFAFAFF' }
+              style: { backgroundColor: '#FAFAFAFF' },
+              type: 'shape'
             }
           ]
         },
@@ -73,6 +116,51 @@ class TestShapes < Minitest::Test
     assert_equal '#FAFAFAFF', ellipse.style.background_color
   end
 
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/shape"
+    )
+      .with(body: [{ shape: 'rectangle', x: 0, y: 0 }])
+      .to_return_json(
+        body: {
+          value: [
+            {
+              id: 'shape-1',
+              shape: 'rectangle',
+              contentEditedBy: {
+                id: 'user-1',
+                firstName: 'John'
+              },
+              type: 'shape'
+            }
+          ]
+        },
+        status: 201
+      )
+
+    create_shape_params =
+      Mural::Widget::CreateShapeParams.new.tap do |params|
+        params.shape = 'rectangle'
+        params.x = 0
+        params.y = 0
+      end
+
+    shapes = @client.mural_content.create_shapes(
+      mural_id,
+      create_shape_params
+    )
+
+    assert_equal 1, shapes.size
+
+    rectangle = shapes.find { |s| s.shape == 'rectangle' }
+
+    assert_instance_of Mural::Widget::Shape, rectangle
+    assert_equal 'John', rectangle.content_edited_by.first_name
+  end
+
   def test_update_shape
     mural_id = 'mural-1'
     shape_id = 'shape-1'
@@ -84,7 +172,7 @@ class TestShapes < Minitest::Test
     )
       .with(body: { title: 'dat shape' })
       .to_return_json(
-        body: { value: { id: 'shape-1', title: 'dat shape' } },
+        body: { value: { id: 'shape-1', title: 'dat shape', type: 'shape' } },
         status: 201
       )
 
@@ -115,7 +203,7 @@ class TestShapes < Minitest::Test
     )
       .with(body: { style: { backgroundColor: '#FAFAFAFF' } })
       .to_return_json(
-        body: { value: { id: 'shape-1' } },
+        body: { value: { id: 'shape-1', type: 'shape' } },
         status: 201
       )
 

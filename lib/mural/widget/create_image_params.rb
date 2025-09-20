@@ -5,30 +5,24 @@ module Mural
     class CreateImageParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createimage
       define_attributes(
-        **Mural::Widget::Image.attrs.reject do |attr|
+        **Mural::Widget::Image.attrs.filter do |attr|
           %i[
-            aspect_ratio
-            content_edited_by
-            content_edited_on
-            created_by
-            created_on
-            expires_in_minutes
-            hide_editor
-            hide_owner
-            id
-            invisible
-            link
-            locked
-            locked_by_facilitator
-            mask
-            natural_height
-            natural_width
-            thumbnail_url
-            type
-            updated_by
-            updated_on
-            url
+            border
+            caption
+            description
+            height
+            hidden
+            instruction
+            parent_id
+            presentation_index
+            rotation
+            show_caption
+            stacking_order
+            width
+            x
+            y
           ].include? attr
         end,
 

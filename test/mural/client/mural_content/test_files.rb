@@ -7,6 +7,42 @@ class TestAssets < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_file_params
+    want = %i[
+      height
+      hidden
+      instruction
+      name
+      parent_id
+      presentation_index
+      rotation
+      stacking_order
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateFileParams.attrs.keys.sort
+  end
+
+  def test_update_file_params
+    want = %i[
+      height
+      hidden
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateFileParams.attrs.keys.sort
+  end
+
   def test_create_file
     mural_id = 'mural-1'
 
@@ -16,7 +52,7 @@ class TestAssets < Minitest::Test
     )
       .with(body: { name: 'my file', x: 5, y: 10 })
       .to_return_json(
-        body: { value: { id: 'widget-1' } },
+        body: { value: { id: 'widget-1', type: 'file' } },
         status: 201
       )
 
@@ -30,6 +66,37 @@ class TestAssets < Minitest::Test
 
     assert_instance_of Mural::Widget::File, file
     assert_equal 'widget-1', file.id
+  end
+
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/file"
+    )
+      .with(body: { name: 'my file', x: 5, y: 10 })
+      .to_return_json(
+        body: {
+          value: {
+            id: 'widget-1',
+            contentEditedBy: { id: 'user-1', firstName: 'John' },
+            type: 'file'
+          }
+        },
+        status: 201
+      )
+
+    params = Mural::Widget::CreateFileParams.new.tap do |params|
+      params.name = 'my file'
+      params.x = 5
+      params.y = 10
+    end
+
+    file = @client.mural_content.create_file(mural_id, params)
+
+    assert_instance_of Mural::Widget::File, file
+    assert_equal 'John', file.content_edited_by.first_name
   end
 
   def test_list_files

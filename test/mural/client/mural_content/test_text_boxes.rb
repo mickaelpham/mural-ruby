@@ -5,6 +5,89 @@ class TestTextBoxes < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_text_box_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      stacking_order
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateTextBoxParams.attrs.keys.sort
+  end
+
+  def test_update_text_box_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateTextBoxParams.attrs.keys.sort
+  end
+
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/textbox"
+    )
+      .with(body: [{ text: 'Hello world' }])
+      .to_return_json(
+        body: { value: [
+          {
+            id: 'text-box-1',
+            text: 'Hello world',
+            contentEditedBy: { id: 'user-1', firstName: 'John' },
+            type: 'text'
+          }
+        ] },
+        status: 201
+      )
+
+    create_text_box_params = [
+      Mural::Widget::CreateTextBoxParams.new.tap do |t|
+        t.text = 'Hello world'
+      end
+    ]
+
+    text_boxes = @client.mural_content.create_text_boxes(
+      mural_id,
+      create_text_box_params
+    )
+
+    assert_equal 1, text_boxes.size
+
+    text_box = text_boxes.first
+
+    assert_instance_of Mural::Widget::Text, text_box
+    assert_equal 'Hello world', text_box.text
+    assert_equal 'John', text_box.content_edited_by.first_name
+  end
+
   def test_create_text_boxes
     mural_id = 'mural-1'
 
@@ -20,11 +103,12 @@ class TestTextBoxes < Minitest::Test
       )
       .to_return_json(
         body: { value: [
-          { id: 'text-box-1', text: 'Hello world' },
+          { id: 'text-box-1', text: 'Hello world', type: 'text' },
           {
             id: 'text-box-2',
             text: 'Bonjour monde',
-            style: { backgroundColor: '#FAFAFAFF' }
+            style: { backgroundColor: '#FAFAFAFF' },
+            type: 'text'
           }
         ] },
         status: 201
@@ -73,7 +157,7 @@ class TestTextBoxes < Minitest::Test
     )
       .with(body: { text: 'Hola mundo' })
       .to_return_json(
-        body: { value: { id: text_box_id, text: 'Hola mundo' } }
+        body: { value: { id: text_box_id, text: 'Hola mundo', type: 'text' } }
       )
 
     update_text_box_params = Mural::Widget::UpdateTextBoxParams.new.tap do |t|
@@ -101,7 +185,11 @@ class TestTextBoxes < Minitest::Test
       .with(body: { style: { backgroundColor: '#FAFAFAFF' } })
       .to_return_json(
         body: {
-          value: { id: text_box_id, style: { backgroundColor: '#FAFAFAFF' } }
+          value: {
+            id: text_box_id,
+            style: { backgroundColor: '#FAFAFAFF' },
+            type: 'text'
+          }
         }
       )
 

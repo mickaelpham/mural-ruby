@@ -5,6 +5,49 @@ class TestTitles < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_title_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      stacking_order
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateTitleParams.attrs.keys.sort
+  end
+
+  def test_update_title_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateTitleParams.attrs.keys.sort
+  end
+
   def test_create_titles
     mural_id = 'mural-1'
 
@@ -20,11 +63,12 @@ class TestTitles < Minitest::Test
       )
       .to_return_json(
         body: { value: [
-          { id: 'title-1', text: 'Hello world' },
+          { id: 'title-1', text: 'Hello world', type: 'text' },
           {
             id: 'title-2',
             text: 'Bonjour monde',
-            style: { backgroundColor: '#FAFAFAFF' }
+            style: { backgroundColor: '#FAFAFAFF' },
+            type: 'text'
           }
         ] },
         status: 201
@@ -59,6 +103,43 @@ class TestTitles < Minitest::Test
     assert_equal '#FAFAFAFF', title_with_style.style.background_color
   end
 
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/title"
+    )
+      .with(body: [{ text: 'Hello world' }])
+      .to_return_json(
+        body: {
+          value: [
+            {
+              id: 'title-1',
+              text: 'Hello world',
+              contentEditedBy: { id: 'user-1', firstName: 'John' },
+              type: 'text'
+            }
+          ]
+        },
+        status: 201
+      )
+
+    create_title_params =
+      Mural::Widget::CreateTitleParams.new.tap do |t|
+        t.text = 'Hello world'
+      end
+
+    titles = @client.mural_content.create_titles(mural_id, create_title_params)
+
+    assert_equal 1, titles.size
+
+    title = titles.first
+
+    assert_instance_of Mural::Widget::Text, title
+    assert_equal 'John', title.content_edited_by.first_name
+  end
+
   def test_update_title
     mural_id = 'mural-1'
     title_id = 'title-1'
@@ -70,7 +151,7 @@ class TestTitles < Minitest::Test
     )
       .with(body: { text: 'Hola mundo' })
       .to_return_json(
-        body: { value: { id: title_id, text: 'Hola mundo' } }
+        body: { value: { id: title_id, text: 'Hola mundo', type: 'text' } }
       )
 
     update_title_params = Mural::Widget::UpdateTitleParams.new.tap do |t|
@@ -98,7 +179,11 @@ class TestTitles < Minitest::Test
       .with(body: { style: { backgroundColor: '#FAFAFAFF' } })
       .to_return_json(
         body: {
-          value: { id: title_id, style: { backgroundColor: '#FAFAFAFF' } }
+          value: {
+            id: title_id,
+            style: { backgroundColor: '#FAFAFAFF' },
+            type: 'text'
+          }
         }
       )
 

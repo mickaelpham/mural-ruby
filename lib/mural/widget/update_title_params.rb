@@ -5,6 +5,7 @@ module Mural
     class UpdateTitleParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/updatetitle
       define_attributes(
         **Mural::Widget::CreateTitleParams.attrs.reject do |attr|
           %i[stacking_order].include? attr

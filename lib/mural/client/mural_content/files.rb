@@ -11,7 +11,7 @@ module Mural
             params.encode
           )
 
-          Mural::Widget::File.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
 
         # https://developers.mural.co/public/reference/getmuralfilewidgets
@@ -21,7 +21,7 @@ module Mural
             { next: next_page }
           )
 
-          files = json['value'].map { |f| Mural::Widget::File.decode(f) }
+          files = json['value'].map { |f| Mural::Widget.decode(f) }
           [files, json['next']]
         end
 
@@ -32,7 +32,7 @@ module Mural
             update_file_params.encode
           )
 
-          Mural::Widget::File.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end

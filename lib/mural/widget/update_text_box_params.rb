@@ -5,6 +5,7 @@ module Mural
     class UpdateTextBoxParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/updatetextbox
       define_attributes(
         **Mural::Widget::CreateTextBoxParams.attrs.reject do |attr|
           %i[stacking_order].include? attr

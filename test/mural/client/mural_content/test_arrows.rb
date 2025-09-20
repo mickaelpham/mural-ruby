@@ -5,6 +5,55 @@ class TestArrows < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_arrow_params
+    want = %i[
+      arrow_type
+      end_ref_id
+      height
+      instruction
+      label
+      parent_id
+      points
+      presentation_index
+      rotation
+      stackable
+      stacking_order
+      start_ref_id
+      style
+      tip
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateArrowParams.attrs.keys.sort
+  end
+
+  def test_update_arrow_params
+    want = %i[
+      arrow_type
+      end_ref_id
+      height
+      instruction
+      label
+      parent_id
+      points
+      presentation_index
+      rotation
+      stackable
+      start_ref_id
+      style
+      tip
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateArrowParams.attrs.keys.sort
+  end
+
   def test_create_minimal_arrow
     mural_id = 'mural-1'
 
@@ -23,7 +72,7 @@ class TestArrows < Minitest::Test
         ]
       }
     ).to_return_json(
-      body: { value: { id: 'arrow-1' } },
+      body: { value: { id: 'arrow-1', type: 'arrow' } },
       status: 201
     )
 
@@ -49,6 +98,59 @@ class TestArrows < Minitest::Test
 
     assert_instance_of Mural::Widget::Arrow, arrow
     assert_equal 'arrow-1', arrow.id
+  end
+
+  def test_should_decode_content_edited_by
+    mural_id = 'mural-1'
+
+    stub_request(
+      :post,
+      "https://app.mural.co/api/public/v1/murals/#{mural_id}/widgets/arrow"
+    ).with(
+      body: {
+        height: 1,
+        width: 216,
+        x: 0,
+        y: 0,
+        points: [
+          { x: 216, y: 0 },
+          { x: 0, y: 0 }
+        ]
+      }
+    ).to_return_json(
+      body: {
+        value: {
+          id: 'arrow-1',
+          contentEditedBy: { id: 'user-1', firstName: 'John' },
+          type: 'arrow'
+        }
+      },
+      status: 201
+    )
+
+    create_arrow_params = Mural::Widget::CreateArrowParams.new.tap do |params|
+      params.height = 1
+      params.width = 216
+      params.x = 0
+      params.y = 0
+
+      params.points = [
+        Mural::Widget::Arrow::Point.new.tap do |p|
+          p.x = 216
+          p.y = 0
+        end,
+        Mural::Widget::Arrow::Point.new.tap do |p|
+          p.x = 0
+          p.y = 0
+        end
+      ]
+    end
+
+    arrow = @client.mural_content.create_arrow(mural_id, create_arrow_params)
+
+    assert_instance_of Mural::Widget::Arrow, arrow
+    assert_equal 'arrow-1', arrow.id
+    assert_equal 'John', arrow.content_edited_by.first_name
   end
 
   def test_create_arrow_without_points
@@ -111,7 +213,7 @@ class TestArrows < Minitest::Test
         label: { format: { fontFamily: 'proxima-nova' } }
       }
     ).to_return_json(
-      body: { value: { id: 'arrow-1' } },
+      body: { value: { id: 'arrow-1', type: 'arrow' } },
       status: 201
     )
 
@@ -173,7 +275,7 @@ class TestArrows < Minitest::Test
         }
       }
     ).to_return_json(
-      body: { value: { id: 'arrow-1' } },
+      body: { value: { id: 'arrow-1', type: 'arrow' } },
       status: 201
     )
 
@@ -228,7 +330,7 @@ class TestArrows < Minitest::Test
           { x: 0, y: 0 }
         ]
       }
-    ).to_return_json(body: { value: { id: 'arrow-1' } })
+    ).to_return_json(body: { value: { id: 'arrow-1', type: 'arrow' } })
 
     update_arrow_params = Mural::Widget::UpdateArrowParams.new.tap do |params|
       params.points = [
@@ -266,7 +368,7 @@ class TestArrows < Minitest::Test
         style: { strokeColor: '#FAFAFAFF' },
         label: { format: { fontFamily: 'proxima-nova' } }
       }
-    ).to_return_json(body: { value: { id: 'arrow-1' } })
+    ).to_return_json(body: { value: { id: 'arrow-1', type: 'arrow' } })
 
     update_arrow_params = Mural::Widget::UpdateArrowParams.new.tap do |params|
       params.style = Mural::Widget::UpdateArrowParams::Style.new.tap do |style|
