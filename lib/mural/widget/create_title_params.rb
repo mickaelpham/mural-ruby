@@ -5,6 +5,7 @@ module Mural
     class CreateTitleParams
       include Mural::Codec
 
+      # https://developers.mural.co/public/reference/createtitle
       define_attributes(
         **Mural::Widget::Text.attrs.filter do |attr|
           %i[

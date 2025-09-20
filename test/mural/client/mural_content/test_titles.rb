@@ -5,6 +5,49 @@ class TestTitles < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_title_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      stacking_order
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateTitleParams.attrs.keys.sort
+  end
+
+  def test_update_title_params
+    want = %i[
+      height
+      hidden
+      hyperlink
+      hyperlink_title
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      style
+      text
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateTitleParams.attrs.keys.sort
+  end
+
   def test_create_titles
     mural_id = 'mural-1'
 
