@@ -11,7 +11,7 @@ module Mural
             create_image_params.encode
           )
 
-          Mural::Widget::Image.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
 
         # https://developers.mural.co/public/reference/createimage
@@ -21,7 +21,7 @@ module Mural
             update_image_params.encode
           )
 
-          Mural::Widget::Image.decode(json['value'])
+          Mural::Widget.decode(json['value'])
         end
       end
     end
