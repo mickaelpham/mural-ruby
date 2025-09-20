@@ -5,6 +5,32 @@ class TestComments < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_comment_params
+    want = %i[
+      message
+      reference_widget_id
+      resolved
+      stacking_order
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateCommentParams.attrs.keys.sort
+  end
+
+  def test_update_comment_params
+    want = %i[
+      message
+      reference_widget_id
+      replies
+      resolved
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateCommentParams.attrs.keys.sort
+  end
+
   def test_create_comment
     mural_id = 'mural-1'
 

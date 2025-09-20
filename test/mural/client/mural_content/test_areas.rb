@@ -5,6 +5,45 @@ class TestAreas < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_area_params
+    want = %i[
+      height
+      hidden
+      instruction
+      layout
+      parent_id
+      presentation_index
+      show_title
+      stacking_order
+      style
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateAreaParams.attrs.keys.sort
+  end
+
+  def test_update_area_params
+    want = %i[
+      height
+      hidden
+      instruction
+      layout
+      parent_id
+      presentation_index
+      show_title
+      style
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateAreaParams.attrs.keys.sort
+  end
+
   def test_create_area
     mural_id = 'mural-1'
 

@@ -7,7 +7,9 @@ module Mural
 
       # https://developers.mural.co/public/reference/updatearea
       define_attributes(
-        **Mural::Widget::CreateAreaParams.attrs
+        **Mural::Widget::CreateAreaParams.attrs.reject do |attr|
+          %i[stacking_order].include? attr
+        end
       )
 
       Style = Mural::Widget::Area::Style

@@ -7,6 +7,42 @@ class TestAssets < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_file_params
+    want = %i[
+      height
+      hidden
+      instruction
+      name
+      parent_id
+      presentation_index
+      rotation
+      stacking_order
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateFileParams.attrs.keys.sort
+  end
+
+  def test_update_file_params
+    want = %i[
+      height
+      hidden
+      instruction
+      parent_id
+      presentation_index
+      rotation
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateFileParams.attrs.keys.sort
+  end
+
   def test_create_file
     mural_id = 'mural-1'
 

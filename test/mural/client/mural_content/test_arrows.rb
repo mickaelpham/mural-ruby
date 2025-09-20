@@ -5,6 +5,55 @@ class TestArrows < Minitest::Test
     @client = Mural::Client.new
   end
 
+  def test_create_arrow_params
+    want = %i[
+      arrow_type
+      end_ref_id
+      height
+      instruction
+      label
+      parent_id
+      points
+      presentation_index
+      rotation
+      stackable
+      stacking_order
+      start_ref_id
+      style
+      tip
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::CreateArrowParams.attrs.keys.sort
+  end
+
+  def test_update_arrow_params
+    want = %i[
+      arrow_type
+      end_ref_id
+      height
+      instruction
+      label
+      parent_id
+      points
+      presentation_index
+      rotation
+      stackable
+      start_ref_id
+      style
+      tip
+      title
+      width
+      x
+      y
+    ]
+
+    assert_equal want, Mural::Widget::UpdateArrowParams.attrs.keys.sort
+  end
+
   def test_create_minimal_arrow
     mural_id = 'mural-1'
 
