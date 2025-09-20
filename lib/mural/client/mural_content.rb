@@ -8,6 +8,7 @@ module Mural
       include Areas
       include Arrows
       include Chats
+      include Comments
       include FacilitationFeatures
       include Files
       include Images
