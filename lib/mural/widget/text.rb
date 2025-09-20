@@ -18,7 +18,7 @@ module Mural
         hyperlink: 'hyperlink',
 
         # Text displayed on the hyperlink button.
-        hyperlinkTitle: 'hyperlinkTitle',
+        hyperlink_title: 'hyperlinkTitle',
 
         # When true, the text wraps to fit the widget. When false, the widget
         # grows to fit the text. True when widget is created as a textbox and

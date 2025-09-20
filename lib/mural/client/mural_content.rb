@@ -8,10 +8,16 @@ module Mural
       include Areas
       include Arrows
       include Chats
+      include Comments
       include FacilitationFeatures
       include Files
+      include Images
+      include Shapes
       include StickyNotes
+      include Tables
       include Tags
+      include TextBoxes
+      include Titles
       include Widgets
 
       def_delegators :@client, :get, :post, :patch, :delete

@@ -51,7 +51,6 @@ module Mural
       )
 
       req = Net::HTTP::Get.new uri
-      # retryable_request(req)
       retryable_request(req)
     end
 

@@ -4,6 +4,10 @@ module Mural
   class Client
     class MuralContent
       module StickyNotes
+        # Create one or more sticky note widgets on a mural. Limit 1000.
+        #
+        # Authorization scope: murals:write
+        #
         # https://developers.mural.co/public/reference/createstickynote
         def create_sticky_notes(mural_id, create_sticky_note_params)
           json = post(
@@ -14,11 +18,17 @@ module Mural
           json['value'].map { |s| Mural::Widget::StickyNote.decode(s) }
         end
 
+        # Update a sticky note widget on a mural.
+        #
+        # Authorization scope: murals:write
+        #
         # https://developers.mural.co/public/reference/updatestickynote
-        def update_sticky_note(mural_id, widget_id, update_sticky_note_params)
+        def update_sticky_note(
+          mural_id, sticky_note_id, update_sticky_note_params
+        )
           json = patch(
             "/api/public/v1/murals/#{mural_id}/widgets/sticky-note" \
-            "/#{widget_id}",
+            "/#{sticky_note_id}",
             update_sticky_note_params.encode
           )
 

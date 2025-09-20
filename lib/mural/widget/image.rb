@@ -40,7 +40,7 @@ module Mural
         show_caption: 'showCaption',
 
         # The URL of the image thumbnail.
-        thumbnailUrl: 'thumbnail_url',
+        thumbnail_url: 'thumbnailUrl',
 
         # The download URL of the image. This URL has expiration time.
         # May be null when download restriction is enabled.
