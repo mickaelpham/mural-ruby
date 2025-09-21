@@ -77,7 +77,7 @@ irb(main):002> mural.users.current_user
 
 ### Upload a file to a mural
 
-To upload a `my.pdf` file that's located in the same directory as where you are
+To upload a `my.pdf` file that’s located in the same directory as where you are
 running the script:
 
 ```rb
@@ -161,9 +161,41 @@ an email notification.
 
 ![mind map example](./img/mind-map.png)
 
-- Likewise, smart planners are collection of widgets, and the API doesn't
+- Likewise, smart planners are collection of widgets, and the API doesn’t
   specify anything about them.
 
 ![smart planner example](./img/smart-planner.png)
 
 [register-app]: https://developers.mural.co/public/docs/register-your-app
+
+## Invaders module!
+
+How about some good ol’ nostalgia? Let’s bring in the
+[space invaders](https://en.wikipedia.org/wiki/Space_Invaders) in a mural!
+
+![space invaders demo](./img/space-invaders-demo.png)
+
+To accomplish this, simply create a script with the following code:
+
+```rb
+require 'mural'
+
+MURAL_ID = 'mural-1' # some mural you have write access to
+
+client = Mural::Client.from_env
+
+begin
+  board = Mural::Invader::Board.new(client, MURAL_ID)
+
+  draw_invader_params = Mural::Invader::DrawInvaderParams.new.tap do |params|
+    params.origin = [0, 0]
+    params.pixel_width = 10 # default, and the minimum size for the square shape
+    params.variant = 0
+  end
+
+  board.draw_invader_grid(draw_invader_params)
+rescue Mural::Error => e
+  puts "\n--- ☠️☠️☠️ MURAL ERROR ☠️☠️☠️ ---"
+  puts e.inspect
+end
+```
